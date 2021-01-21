@@ -52,13 +52,28 @@ function getRssData(url, callback){
 }
 
 let Parser = require('rss-parser');
-let parser = new Parser();
+let parser = new Parser({
+  customFields: {
+    item: [
+      ['media:content', 'media:content', {keepArray: true}],
+    ]
+  }
+});
 async function getRssFeed(url){
     let feed = await parser.parseURL(url);
-    console.log(feed.title);
-     feed.items.forEach(item => {
-	 console.log(item.title + ':' + item.link)
-     });
+
+    // let article = feed.items[0];
+    // console.log(article);
+    // mediaContent = article['media:content']
+
+    // console.log("-----------")
+    // console.log(mediaContent[0]['$'].url)
+    return feed;
+    // console.log(feed.title);
+    //  feed.items.forEach(item => {
+    // 	 // console.log(item.title + ':' + item.link)
+    // 	 console.log()
+    //  });
 }
 
 function main(){
