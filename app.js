@@ -1,27 +1,87 @@
 // grab the packages we need
 var express = require('express');
+var cors = require('cors')
+
+var corsOptions = {
+  origin: 'http://www.dn.se',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
 const connectLivereload = require("connect-livereload");
 
+const nunjucks = require('nunjucks')
 
-const livereload = require("livereload");
-const liveReloadServer = livereload.createServer();
+// const livereload = require("livereload");
+// const liveReloadServer = livereload.createServer();
 // liveReloadServer.watch(path.join(__dirname, 'public'));
-liveReloadServer.watch(".");
+// liveReloadServer.watch(".");
 
-liveReloadServer.server.once("connection", () => {
-  setTimeout(() => {
-    liveReloadServer.refresh("/");
-  }, 100);
-});
+// liveReloadServer.server.once("connection", () => {
+//   setTimeout(() => {
+//     liveReloadServer.refresh("/");
+//   }, 100);
+// });
 
 var app = express();
-app.use(connectLivereload());
+// app.use(connectLivereload());
+app.use(cors());
+
+
+nunjucks.configure('views', {
+    autoescape: true,
+    express: app
+});
 
 var port = process.env.PORT || 3000;
 
 // routes will go here
 app.get('/', function(req, res) {
     res.send("Hello world!");
+});
+
+var fs = require('fs'),
+    request = require('request');
+
+var download = function(uri, filename, callback){
+  request.head(uri, function(err, res, body){
+    console.log('content-type:', res.headers['content-type']);
+    console.log('content-length:', res.headers['content-length']);
+
+    request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+  });
+};
+
+// download('https://www.google.com/images/srpr/logo3w.png', 'google.png', function(){
+  // console.log('done');
+// });
+
+context = {}
+function updateCurrentArticle(article){
+    imageUrl = article['media:content'][0]['$'].url
+    if(imageUrl){
+	download(imageUrl, 'public/img.png', function(){
+	    console.log("Done downloading");
+	    context.link = '/img.png'
+	});
+    }else{
+	    context.link = '1'
+    }
+    // download(article.link, 'public/img.png', function(){console.log("Done")})
+    context.mynumber = 36;
+    context.title = article.title;
+    context.description = article.description
+    console.log(article.link)
+
+    console.log(article['media:content'][0]['$'].url);
+}
+
+var path = require('path');
+var dir = path.join(__dirname, 'public');
+app.use(express.static(dir))
+
+
+app.get('/news', cors(), function(req, res){
+    res.render('template.html', context);
 });
 // start the server
 app.listen(port);
@@ -59,6 +119,7 @@ let parser = new Parser({
     ]
   }
 });
+
 async function getRssFeed(url){
     let feed = await parser.parseURL(url);
 
@@ -81,7 +142,11 @@ function main(){
     // getRssData(RSS_URL, function(data){
     // 	console.log("Retrieved data");
     // });
-    getRssFeed(RSS_URL);
+    getRssFeed(RSS_URL).then(function(data){
+	// console.log("Getting data:",data.items[0])
+	article = data.items[0];
+	updateCurrentArticle(article)
+    });
 }
 
 main();
