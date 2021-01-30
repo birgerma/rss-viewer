@@ -57,7 +57,11 @@ var download = function(uri, filename, callback){
 
 context = {}
 function updateCurrentArticle(article){
-    imageUrl = article['media:content'][0]['$'].url
+    try{
+	imageUrl = article['media:content'][0]['$'].url
+    } catch(e){
+	imageUrl = false;
+    }
     if(imageUrl){
 	download(imageUrl, 'public/img.png', function(){
 	    console.log("Done downloading");
@@ -66,25 +70,28 @@ function updateCurrentArticle(article){
     }else{
 	    context.image = undefined
     }
-    // download(article.link, 'public/img.png', function(){console.log("Done")})
-    console.log("Article:",article)
-    context.mynumber = 36;
-    
     context.title = article.title;
     context.date = article.pubDate;
-    console.log("Date:", context.date)
+    // console.log("Date:", context.date)
 
     context.author = article['dc:creator']
-    console.log("Author:", context.author)
+    // console.log("Author:", context.author)
     
     context.description = article.description
     console.log(article.link)
 
-    mediaContent = article['media:content'][0];
-    console.log("Media content",mediaContent);
+
+
+    context.mediaDescription = undefined
+    try {
+	mediaContent = article['media:content'][0];
+	context.mediaDescription = mediaDescription = article['media:content'][0]['media:description'][0]
+    } catch (e){
+	console.log("Error:", e)
+    }
+    // console.log("Media content",mediaContent);
     
-    context.mediaDescription = mediaDescription = article['media:content'][0]['media:description'][0]
-    console.log("Media description:", mediaDescription);
+    // console.log("Media description:", mediaDescription);
     
     
 }
@@ -156,10 +163,18 @@ function main(){
     // getRssData(RSS_URL, function(data){
     // 	console.log("Retrieved data");
     // });
+    const INTERVAL = 1000*60*5
     getRssFeed(RSS_URL).then(function(data){
 	// console.log("Getting data:",data.items[0])
-	article = data.items[0];
-	updateCurrentArticle(article)
+	updateCurrentArticle(data.items[0]);
+	index = 1;
+	setInterval(function(){
+	    // console.log("hi")
+	    article = data.items[index];
+	    index++;
+	    
+	    updateCurrentArticle(article)
+	},INTERVAL) //logs hi every second
     });
 }
 
