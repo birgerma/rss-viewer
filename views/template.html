@@ -1,5 +1,6 @@
 <html>
   <head>
+    <link rel="stylesheet" href="./style.css">
     <script>
       setTimeout(function(){
 	  window.location.reload(1);
@@ -9,15 +10,11 @@
   <body>
     <article>
       <h2>{{title}}</h2>
+      <p>{{author}} - {{date}}</p>
       <p>{{description}}</p>
-      <img src="{{link}}" alt="">
-
-      <p>HERE I AM</p>
-      <img src="https://www.dn.se/varlden/covidsmittad-mor-med-nyfodd-kastades-ut-fran-sjukhus/" alt="">
+      <img src="{{image}}" alt="">
+      <p>{{mediaDescription}}</p>
 
     </article>
-    Hello Template!
-
-    My number is: {{ mynumber }}
   </body>
 </html>

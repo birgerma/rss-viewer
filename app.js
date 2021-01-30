@@ -61,18 +61,32 @@ function updateCurrentArticle(article){
     if(imageUrl){
 	download(imageUrl, 'public/img.png', function(){
 	    console.log("Done downloading");
-	    context.link = '/img.png'
+	    context.image = '/img.png'
 	});
     }else{
-	    context.link = '1'
+	    context.image = undefined
     }
     // download(article.link, 'public/img.png', function(){console.log("Done")})
+    console.log("Article:",article)
     context.mynumber = 36;
+    
     context.title = article.title;
+    context.date = article.pubDate;
+    console.log("Date:", context.date)
+
+    context.author = article['dc:creator']
+    console.log("Author:", context.author)
+    
     context.description = article.description
     console.log(article.link)
 
-    console.log(article['media:content'][0]['$'].url);
+    mediaContent = article['media:content'][0];
+    console.log("Media content",mediaContent);
+    
+    context.mediaDescription = mediaDescription = article['media:content'][0]['media:description'][0]
+    console.log("Media description:", mediaDescription);
+    
+    
 }
 
 var path = require('path');
