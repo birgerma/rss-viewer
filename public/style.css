@@ -4,6 +4,7 @@ a {
 }
 
 article {
+    max-width: 500px;
     background: #ECEFF1;
     border-radius: 2px;
     border-bottom-style: solid;
