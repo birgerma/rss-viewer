@@ -4,17 +4,23 @@
     <script>
       setTimeout(function(){
 	  window.location.reload(1);
-      }, 2000);
+      }, 30000);
+
+      function openLink(link){
+	  console.log("Open link:" + link);
+	  window.open(link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400");;
+      };
     </script>
   </head>
   <body>
-    <article>
-      <h2>{{title}}</h2>
-      <p>{{author}} - {{date}}</p>
-      <p>{{description}}</p>
-      <img src="{{image}}" alt="">
-      <p>{{mediaDescription}}</p>
-
-    </article>
+    <div onclick=openLink("{{link}}");>
+      <article>
+	<h2>{{title}}</h2>
+	<p>{{author}} - {{date}}</p>
+	<p>{{description}}</p>
+	<img src="{{image}}" alt="">
+	<p>{{mediaDescription}}</p>
+      </article>
+    </div>
   </body>
 </html>

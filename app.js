@@ -46,7 +46,8 @@ function updateCurrentArticle(article){
     
     context.description = article.description
     console.log(article.link)
-
+    context.link = article.link
+    
     context.mediaDescription = undefined
     try {
 	mediaContent = article['media:content'][0];
